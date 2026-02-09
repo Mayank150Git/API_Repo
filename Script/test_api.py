@@ -12,5 +12,8 @@ def test_TC1(playwright:Playwright):
 
     JsonResponse = PostResponse.json()
     print(JsonResponse)
+    assert PostResponse.status == 200
+
+
 
 
