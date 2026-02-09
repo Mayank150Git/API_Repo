@@ -21,20 +21,28 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                bat 'call venv\\Scripts\\activate && pytest -v -s --html=report.html'
+                bat 'call venv\\Scripts\\activate && pytest -v -s --html=report.html --self-contained-html --junit-xml=results.xml'
             }
         }
 
         stage('Publish Test Results') {
             steps {
                 junit 'results.xml'
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: '',
+                    reportFiles: 'report.html',
+                    reportName: 'Playwright Test Report'
+                ])
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'results.xml', fingerprint: true
+            archiveArtifacts artifacts: '*.html, *.xml', fingerprint: true, allowEmptyArchive: true
         }
     }
 }
